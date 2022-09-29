@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws AddPlaneException {
 
         AviaCompany turkishAirlines = new AviaCompany("Tukish Airlines", "Istambul, sq. Ambady, b8");
         System.out.println(turkishAirlines);

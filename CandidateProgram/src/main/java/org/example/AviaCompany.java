@@ -39,10 +39,16 @@ public class AviaCompany {
 
     private Map<Class, List<Airplane>> planes = new HashMap<>();
 
-    public void addPlane(Class type, Airplane airplane) {
+    public void addPlane(Class type, Airplane airplane) throws AddPlaneException {
         planes.computeIfAbsent(type, k -> new ArrayList<Airplane>());
         planes.get(type).add(airplane);
-    }
+        for (int i = 0; i < planes.get(type).size(); i++) {
+            if(Objects.equals(planes.get(type).get(0).getName(), "")) throw new AddPlaneException("name can not be empty");
+            if( planes.get(type).get(0).getPrice()==0) throw new AddPlaneException("Price can not be zero");
+            if( planes.get(type).get(0).getMaxLoad()==0) throw new AddPlaneException("Max load can not be zero");
+            if( planes.get(type).get(0).getflightDistance()==0) throw new AddPlaneException("fly distance can not be zero");
+        }
+          }
 
     public int sumCapacity() {
         int capacity = 0;
@@ -68,25 +74,28 @@ public class AviaCompany {
 
     public void flyDistanceSort() {
         List<List<Airplane>> mapValues = new ArrayList<>(planes.values());
-        List<Airplane> flat =mapValues.stream().flatMap(List::stream).collect(Collectors.toList());
+        List<Airplane> flat = mapValues.stream().flatMap(List::stream).collect(Collectors.toList());
         flat.sort(Comparator.comparing(Airplane::getflightDistance));
         Collections.reverse(flat);
         System.out.println(flat);
     }
 
-    public void search() {
-        int minPrice, maxPrice;
-        double minLoad, maxLoad;
+    public void search() throws InputMismatchException {
+        int minPrice = 0, maxPrice = 0;
+        double minLoad = 0, maxLoad = 0;
         Scanner input = new Scanner(System.in);
-        System.out.println("Put minimal price:");
-        minPrice = input.nextInt();
-        System.out.println("Put maximum price:");
-        maxPrice = input.nextInt();
-        System.out.println("Put minimal load:");
-        minLoad = input.nextDouble();
-        System.out.println("Put maximum load:");
-        maxLoad = input.nextDouble();
-        System.out.println("Find planes from the search");
+        try {
+            System.out.println("Put minimal price:");
+            minPrice = input.nextInt();
+            System.out.println("Put maximum price:");
+            maxPrice = input.nextInt();
+            System.out.println("Put minimal load:");
+            minLoad = input.nextDouble();
+            System.out.println("Put maximum load:");
+            maxLoad = input.nextDouble();
+        } catch (InputMismatchException e) {
+            System.out.println("incorrect input");
+        }
         boolean count = false;
         for (Map.Entry<Class, List<Airplane>> entry : planes.entrySet()) {
             for (Airplane plane : entry.getValue()) {
@@ -101,6 +110,7 @@ public class AviaCompany {
             System.out.println("No one plane found, try again with other criterias");
         }
     }
+
     public void allPlanes() {
         System.out.println(planes.values());
     }
